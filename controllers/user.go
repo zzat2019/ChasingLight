@@ -23,6 +23,7 @@ func (u *UserController) Post() {
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	uid := models.AddUser(user)
 	u.Data["json"] = map[string]string{"uid": uid}
+	//哈哈哈
 	u.ServeJSON()
 }
 
