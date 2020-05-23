@@ -13,6 +13,12 @@ type UsersController struct {
 
 var response = make(map[string]interface{})
 
+// @Title Get
+// @Description get user by id
+// @Param	id		path 	string	true		"The key for staticblock"
+// @Success 200 {object} models.Users
+// @Failure 403 :id is empty
+// @router /:id [get]
 func (c *UsersController) Get() {
 	var users models.Users
 	err := func() error {
@@ -37,5 +43,14 @@ func (c *UsersController) Get() {
 	response["data"] = users
 	// 接口成功统一返回
 	c.Data["json"] = response
+	c.ServeJSON()
+}
+
+// @Title logout
+// @Description Logs out current logged in user session
+// @Success 200 {string} logout success
+// @router /logout [get]
+func (c *UsersController) Logout() {
+	c.Data["json"] = "logout successsssssa"
 	c.ServeJSON()
 }
