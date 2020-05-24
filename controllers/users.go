@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
+	uuid "github.com/satori/go.uuid"
 )
 
 // Operations about Users
@@ -78,7 +79,11 @@ func (c *UsersController) Register() {
 		c.Data["json"] = response
 		c.ServeJSON()
 	}
-	id, err := models.CreateUsers(users.Phone, users.Password)
+	u1, err := uuid.NewV4()
+	u2 := uuid.NewV5(u1, "chasinglight").String()
+	users.Uuid = u2
+	id, err := models.CreateUsers(users.Phone, users.Password, users.Uuid)
+	_ = id
 	if err != nil {
 		response["code"] = 400
 		response["msg"] = "创建失败"
@@ -88,7 +93,7 @@ func (c *UsersController) Register() {
 	}
 	response["code"] = 200
 	response["msg"] = "创建成功"
-	response["data"] = id
+	response["data"] = users
 	// 接口成功统一返回
 	c.Data["json"] = response
 	c.ServeJSON()

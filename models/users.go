@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"github.com/astaxie/beego/orm"
 )
 
@@ -41,14 +42,16 @@ func GetUsers(id int64) (s Users, err error) {
 	return
 }
 
-func CreateUsers(phone string, password string) (id int64, err error) {
+func CreateUsers(phone string, password string, uuid string) (id int64, err error) {
 	o := orm.NewOrm()
 	var users Users
 	users.Phone = phone
 	users.Password = password
+	users.Uuid = uuid
 	id, err = o.Insert(&users)
-	if err == nil {
-		return 8, err
+	if err != nil {
+		err = errors.New("插入失败")
+		return 0, err
 	}
-	return 9, err
+	return id, nil
 }
