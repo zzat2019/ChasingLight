@@ -4,6 +4,7 @@ import (
 	"ChasingLight/models"
 	"errors"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/validation"
 )
 
 // Operations about Users
@@ -52,5 +53,43 @@ func (c *UsersController) Get() {
 // @router /logout [get]
 func (c *UsersController) Logout() {
 	c.Data["json"] = "logout successsssssa"
+	c.ServeJSON()
+}
+
+// @Title CreateUser
+// @Description create users
+// @Param	body		body 	models.User	true		"body for user content"
+// @Success 200 {int} models.Users.Id
+// @Failure 403 body is empty
+// @router /register [post]
+func (c *UsersController) Register() {
+	var users models.Users
+	users.Phone = c.GetString("phone")
+	users.Password = c.GetString("password")
+	//参数校验
+	valid := validation.Validation{}
+	valid.Required(users.Phone, "phone")
+	valid.Required(users.Phone, "password")
+	valid.Phone(users.Phone, "phone")
+	if valid.HasErrors() {
+		response["code"] = 400
+		response["msg"] = "参数错误"
+		// 接口成功统一返回
+		c.Data["json"] = response
+		c.ServeJSON()
+	}
+	id, err := models.CreateUsers(users.Phone, users.Password)
+	if err != nil {
+		response["code"] = 400
+		response["msg"] = "创建失败"
+		// 接口成功统一返回
+		c.Data["json"] = response
+		c.ServeJSON()
+	}
+	response["code"] = 200
+	response["msg"] = "创建成功"
+	response["data"] = id
+	// 接口成功统一返回
+	c.Data["json"] = response
 	c.ServeJSON()
 }

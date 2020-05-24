@@ -1,6 +1,8 @@
 package models
 
-import "github.com/astaxie/beego/orm"
+import (
+	"github.com/astaxie/beego/orm"
+)
 
 type Users struct {
 	Id         int64  `orm:"column(id)"`
@@ -37,4 +39,16 @@ func GetUsers(id int64) (s Users, err error) {
 		return s, err
 	}
 	return
+}
+
+func CreateUsers(phone string, password string) (id int64, err error) {
+	o := orm.NewOrm()
+	var users Users
+	users.Phone = phone
+	users.Password = password
+	id, err = o.Insert(&users)
+	if err == nil {
+		return 8, err
+	}
+	return 9, err
 }
