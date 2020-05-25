@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"github.com/astaxie/beego/orm"
+	"time"
 )
 
 type Users struct {
@@ -17,8 +18,8 @@ type Users struct {
 	Password   string `orm:"column(password)"`
 	SystemStar int    `orm:"column(system_star)"`
 	OwnStar    int    `orm:"column(own_star)"`
-	CreateTime int    `orm:"column(create_time)"`
-	UpdateTime int    `orm:"column(update_time)"`
+	CreateTime int64  `orm:"column(create_time)"`
+	UpdateTime int64  `orm:"column(update_time)"`
 	Status     int    `orm:"column(status)"`
 }
 
@@ -42,16 +43,24 @@ func GetUsers(id int64) (s Users, err error) {
 	return
 }
 
-func CreateUsers(phone string, password string, uuid string) (id int64, err error) {
+func CreateUsers(phone string, password string, uuid string) (status bool, err error) {
 	o := orm.NewOrm()
 	var users Users
+	var maps []orm.Params
 	users.Phone = phone
 	users.Password = password
 	users.Uuid = uuid
-	id, err = o.Insert(&users)
-	if err != nil {
-		err = errors.New("插入失败")
-		return 0, err
+	res, err := o.Raw("select uuid from user where phone = ?", phone).Values(&maps)
+	if err != nil || res > 0 {
+		return false, errors.New("该手机号已被注册")
 	}
-	return id, nil
+	users.CreateTime = time.Now().Unix()
+	users.UpdateTime = time.Now().Unix()
+	users.Status = 1
+	id, err := o.Insert(&users)
+	_ = id
+	if err != nil {
+		return false, errors.New("插入失败")
+	}
+	return true, nil
 }

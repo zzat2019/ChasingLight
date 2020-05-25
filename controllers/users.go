@@ -14,6 +14,7 @@ type UsersController struct {
 }
 
 var response = make(map[string]interface{})
+var data = make(map[string]interface{})
 
 // @Title Get
 // @Description get user by id
@@ -82,19 +83,32 @@ func (c *UsersController) Register() {
 	u1, err := uuid.NewV4()
 	u2 := uuid.NewV5(u1, "chasinglight").String()
 	users.Uuid = u2
-	id, err := models.CreateUsers(users.Phone, users.Password, users.Uuid)
-	_ = id
+	status, err := models.CreateUsers(users.Phone, users.Password, users.Uuid)
 	if err != nil {
 		response["code"] = 400
 		response["msg"] = "创建失败"
-		// 接口成功统一返回
+		data["status"] = err.Error()
+		response["data"] = data
 		c.Data["json"] = response
 		c.ServeJSON()
 	}
 	response["code"] = 200
 	response["msg"] = "创建成功"
-	response["data"] = users
+	data["status"] = status
+	response["data"] = data
 	// 接口成功统一返回
 	c.Data["json"] = response
 	c.ServeJSON()
+}
+
+// @Title Login
+// @Description Logs user into the system
+// @Success 200 {string} login success
+// @Failure 403 user not exist
+// @router /login [get]
+func (c *UsersController) login() {
+	var users models.Users
+	users.Phone = c.GetString("phone")
+	users.Password = c.GetString("password")
+
 }
