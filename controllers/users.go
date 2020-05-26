@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
+	"github.com/gomodule/redigo/redis"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -93,7 +94,7 @@ func (c *UsersController) Register() {
 		c.ServeJSON()
 	}
 	response["code"] = 200
-	response["msg"] = "创建成功1"
+	response["msg"] = "创建成功"
 	data["status"] = status
 	response["data"] = data
 	// 接口成功统一返回
@@ -105,10 +106,14 @@ func (c *UsersController) Register() {
 // @Description Logs user into the system
 // @Success 200 {string} login success
 // @Failure 403 user not exist
-// @router /login [get]
-func (c *UsersController) login() {
-	var users models.Users
-	users.Phone = c.GetString("phone")
-	users.Password = c.GetString("password")
+// @router /login [post]
+func (c *UsersController) Login() {
+	rs, err := redis.Dial("tcp", "47.95.251.199")
+	_ = err
+	defer rs.Close()
+	rs.Do("set", "cl", "hello")
+	//var users models.Users
+	//users.Phone = c.GetString("phone")
+	//users.Password = c.GetString("password")
 
 }
