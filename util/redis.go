@@ -11,17 +11,17 @@ import (
 
 var Cache cache.Cache
 
-func init() {
+func Init() {
 	collectionName := beego.AppConfig.String("cache.collectionName")
-	conn := beego.AppConfig.String("6379")
-	dbNum := beego.AppConfig.String("0")
-	password := beego.AppConfig.String("zzat1995")
+	conn := beego.AppConfig.String("cache.conn")
+	dbNum := beego.AppConfig.String("cache.dbNum")
+	//password := beego.AppConfig.String("cache.password")
 	// 设置配置参数
 	config := orm.Params{
 		"key":      collectionName,
 		"conn":     conn,
 		"dbNum":    dbNum,
-		"password": password,
+		"password": "zzat1995",
 	}
 	configStr, err := json.Marshal(config)
 	logs.Debug(string(configStr))

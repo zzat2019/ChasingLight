@@ -2,11 +2,13 @@ package controllers
 
 import (
 	"ChasingLight/models"
-	"errors"
+	"ChasingLight/util"
+	//"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
-	"github.com/gomodule/redigo/redis"
+	//"github.com/gomodule/redigo/redis"
 	uuid "github.com/satori/go.uuid"
+	"time"
 )
 
 // Operations about Users
@@ -23,32 +25,32 @@ var data = make(map[string]interface{})
 // @Success 200 {object} models.Users
 // @Failure 403 :id is empty
 // @router /:id [get]
-func (c *UsersController) Get() {
-	var users models.Users
-	err := func() error {
-		id, err := c.GetInt64("id")
-		beego.Info(id)
-		if err != nil {
-			id = 1
-		}
-		users, err = models.GetUsers(id)
-		if err != nil {
-			return errors.New("subject not exist")
-		}
-		return nil
-	}()
-
-	if err != nil {
-		c.Ctx.WriteString("wrong params")
-	}
-
-	response["code"] = 200
-	response["msg"] = "查询成功"
-	response["data"] = users
-	// 接口成功统一返回
-	c.Data["json"] = response
-	c.ServeJSON()
-}
+//func (c *UsersController) Get() {
+//	var users models.Users
+//	err := func() error {
+//		id, err := c.GetInt64("id")
+//		beego.Info(id)
+//		if err != nil {
+//			id = 1
+//		}
+//		users, err = models.GetUsers(id)
+//		if err != nil {
+//			return errors.New("subject not exist")
+//		}
+//		return nil
+//	}()
+//
+//	if err != nil {
+//		c.Ctx.WriteString("wrong params")
+//	}
+//
+//	response["code"] = 200
+//	response["msg"] = "查询成功"
+//	response["data"] = users
+//	// 接口成功统一返回
+//	c.Data["json"] = response
+//	c.ServeJSON()
+//}
 
 // @Title logout
 // @Description Logs out current logged in user session
@@ -106,12 +108,12 @@ func (c *UsersController) Register() {
 // @Description Logs user into the system
 // @Success 200 {string} login success
 // @Failure 403 user not exist
-// @router /login [post]
+// @router /login [get]
 func (c *UsersController) Login() {
-	rs, err := redis.Dial("tcp", "47.95.251.199")
-	_ = err
-	defer rs.Close()
-	rs.Do("set", "cl", "hello")
+	rs := util.Cache
+	rs.Put("ok", "wahah", time.Second*3600)
+	c.Data["json"] = 1
+	c.ServeJSON()
 	//var users models.Users
 	//users.Phone = c.GetString("phone")
 	//users.Password = c.GetString("password")
