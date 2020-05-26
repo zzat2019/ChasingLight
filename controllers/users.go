@@ -93,7 +93,7 @@ func (c *UsersController) Register() {
 		c.ServeJSON()
 	}
 	response["code"] = 200
-	response["msg"] = "创建成功"
+	response["msg"] = "创建成功1"
 	data["status"] = status
 	response["data"] = data
 	// 接口成功统一返回
