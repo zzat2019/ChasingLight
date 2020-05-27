@@ -3,12 +3,15 @@ package controllers
 import (
 	"ChasingLight/models"
 	"ChasingLight/util"
+	"github.com/astaxie/beego/cache"
+	"github.com/astaxie/beego/logs"
+	"time"
+
 	//"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
 	//"github.com/gomodule/redigo/redis"
 	uuid "github.com/satori/go.uuid"
-	"time"
 )
 
 // Operations about Users
@@ -111,8 +114,10 @@ func (c *UsersController) Register() {
 // @router /login [get]
 func (c *UsersController) Login() {
 	rs := util.Cache
-	rs.Put("ok", "wahah", time.Second*3600)
-	c.Data["json"] = 1
+	rs.Put("qwer", "25644", time.Second*3600)
+	a := rs.Get("qweraa")
+	c.Data["json"] = cache.GetString(a)
+	logs.Info(a)
 	c.ServeJSON()
 	//var users models.Users
 	//users.Phone = c.GetString("phone")
