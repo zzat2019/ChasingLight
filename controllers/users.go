@@ -3,8 +3,6 @@ package controllers
 import (
 	"ChasingLight/models"
 	"ChasingLight/util"
-	"github.com/astaxie/beego/cache"
-	"github.com/astaxie/beego/logs"
 	"time"
 
 	//"fmt"
@@ -111,16 +109,25 @@ func (c *UsersController) Register() {
 // @Description Logs user into the system
 // @Success 200 {string} login success
 // @Failure 403 user not exist
-// @router /login [get]
+// @router /login [post]
 func (c *UsersController) Login() {
-	rs := util.Cache
-	rs.Put("qwer", "25644", time.Second*3600)
-	a := rs.Get("qweraa")
-	c.Data["json"] = cache.GetString(a)
-	logs.Info(a)
-	c.ServeJSON()
-	//var users models.Users
-	//users.Phone = c.GetString("phone")
-	//users.Password = c.GetString("password")
+	var users models.Users
+	users.Phone = c.GetString("phone")
+	users.Password = c.GetString("password")
+	res, err := models.LoginUser(users.Phone, users.Password)
+	if err != nil {
+		response["code"] = 400
+		response["msg"] = "登录失败"
+		data["status"] = false
+		response["data"] = data
+		c.Data["json"] = response
+		c.ServeJSON()
+	} else {
+		rs := util.Cache
+		rs.Put("qwer", "25644", time.Second*3600)
+		//s := "chasinglight" + string(time.Now().Unix())
 
+	}
+	c.Data["json"] = res
+	c.ServeJSON()
 }

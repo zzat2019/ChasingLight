@@ -64,3 +64,13 @@ func CreateUsers(phone string, password string, uuid string) (status bool, err e
 	}
 	return true, nil
 }
+
+func LoginUser(phone string, password string) (dataList []orm.Params, err error) {
+	var list []orm.Params
+	o := orm.NewOrm()
+	res, err := o.Raw("SELECT id FROM user WHERE phone = ? AND password = ?", phone, password).Values(&list)
+	if res == 0 {
+		return list, errors.New("登录失败")
+	}
+	return list, err
+}
