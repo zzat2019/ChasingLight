@@ -3,12 +3,9 @@ package controllers
 import (
 	"ChasingLight/models"
 	"ChasingLight/util"
-	"time"
-
 	//"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/validation"
-	//"github.com/gomodule/redigo/redis"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -115,6 +112,7 @@ func (c *UsersController) Login() {
 	users.Phone = c.GetString("phone")
 	users.Password = c.GetString("password")
 	res, err := models.LoginUser(users.Phone, users.Password)
+	_ = res
 	if err != nil {
 		response["code"] = 400
 		response["msg"] = "登录失败"
@@ -122,12 +120,10 @@ func (c *UsersController) Login() {
 		response["data"] = data
 		c.Data["json"] = response
 		c.ServeJSON()
-	} else {
-		rs := util.Cache
-		rs.Put("qwer", "25644", time.Second*3600)
-		//s := "chasinglight" + string(time.Now().Unix())
-
 	}
-	c.Data["json"] = res
+	rc := util.RedisClient.Get()
+	defer rc.Close()
+	test, _ := rc.Do("SETEX", "uuid", 60, "aaa")
+	c.Data["json"] = test
 	c.ServeJSON()
 }
