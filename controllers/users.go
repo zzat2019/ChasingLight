@@ -123,7 +123,9 @@ func (c *UsersController) Login() {
 	}
 	rc := util.RedisClient.Get()
 	defer rc.Close()
-	test, _ := rc.Do("SETEX", "uuid", 60, "aaa")
+	uu, _ := uuid.NewV1()
+	test, _ := rc.Do("SETEX", uuid.NewV3(uu, "aa"), 60, res[0]["id"])
+	_ = test
 	c.Data["json"] = test
 	c.ServeJSON()
 }
